@@ -1,5 +1,7 @@
 package sbp.io;
 
+import java.io.File;
+
 public class MyIOExample
 {
     /**
@@ -16,9 +18,19 @@ public class MyIOExample
      */
     public boolean workWithFile(String fileName)
     {
-        /*
-        ...
-         */
+        File file = new File(fileName);
+        boolean exists = file.exists();
+        boolean isFile = file.isFile();
+
+        if (exists){
+            System.out.println("абсолютный путь " + file.getAbsolutePath());
+            System.out.println("родительский путь "+ file.getParentFile());
+            if (isFile){
+                System.out.println("размер файла "  + file.length());
+                System.out.println("время последнего изменения " +  file.lastModified());
+                return true;
+            }
+        }
         return false;
     }
 

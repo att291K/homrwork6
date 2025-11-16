@@ -12,18 +12,46 @@ public class WorkWithExceptions
      */
     public void exceptionProcessing()
     {
-        /*
-        ...
-         */
+        RuntimeException runtimeException = null;
+
+        try {
+            throwUncheckedException();
+        } catch (RuntimeException e) {
+            printException(e);
+            runtimeException = e;
+        }
+
+        try {
+            throwCheckedException();
+        } catch (Exception e) {
+            printException(e);
+            String textException = e.getMessage() + " " + runtimeException.getMessage();
+            System.out.println("Finish");
+            throw new RuntimeException(textException );
+        }
     }
 
+    public void printException(Exception e){
+        System.out.println("Exception " + e.getMessage() );
+        StringBuilder tempString = new StringBuilder();
+        for(StackTraceElement item : e.getStackTrace()){
+            tempString.append(item.toString()).append("\n");
+        }
+        System.out.printf("StackTrace " + tempString);
+    }
     /**
      * (* - необязательно) Доп. задание.
      * Выписать в javadoc (здесь) - все варианты оптимизации и устранения недочётов метода
      * @throws IllegalStateException
      * @throws Exception
      * @throws RuntimeException
+     *
+     * IllegalArgumentException наследуется от RuntimeException - поэтому блок Step 3 можно убрать - вызываемое исключение будет отловлено в блоке Step 2
+     * блок finally выполнится в любом случае, поэтому исключение выброшенное в нём затрёт предыдущее - исключение from finally нужно убрать
      */
+
+    //
+    //
     public void hardExceptionProcessing() throws IllegalStateException, Exception, RuntimeException
     {
         System.out.println("Start");

@@ -1,6 +1,9 @@
 package sbp.io;
 
-import java.io.File;
+import java.io.*;
+import java.util.Arrays;
+
+import static java.lang.System.out;
 
 public class MyIOExample
 {
@@ -23,11 +26,11 @@ public class MyIOExample
         boolean isFile = file.isFile();
 
         if (exists){
-            System.out.println("абсолютный путь " + file.getAbsolutePath());
-            System.out.println("родительский путь "+ file.getParentFile());
+            out.println("абсолютный путь " + file.getAbsolutePath());
+            out.println("родительский путь "+ file.getParentFile());
             if (isFile){
-                System.out.println("размер файла "  + file.length());
-                System.out.println("время последнего изменения " +  file.lastModified());
+                out.println("размер файла "  + file.length());
+                out.println("время последнего изменения " +  file.lastModified());
                 return true;
             }
         }
@@ -43,10 +46,26 @@ public class MyIOExample
      */
     public boolean copyFile(String sourceFileName, String destinationFileName)
     {
-        /*
-        ...
-         */
-        return false;
+        File sourceFile = new File(sourceFileName);
+        File destinationFile = new File(destinationFileName);
+        if (destinationFile.exists()) return false;
+
+        if(sourceFile.exists() && sourceFile.isFile()){
+            try(final FileInputStream fileInputStream = new FileInputStream(sourceFile);
+                final FileOutputStream fileOutputStream = new FileOutputStream(destinationFile, true)){
+
+                byte[] buffer = new byte[256];
+                int count;
+                while ((count = fileInputStream.read(buffer)) != -1){
+                    fileOutputStream.write(buffer, 0, count);
+                }
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return destinationFile.exists();
     }
 
     /**
@@ -58,10 +77,28 @@ public class MyIOExample
      */
     public boolean copyBufferedFile(String sourceFileName, String destinationFileName)
     {
-        /*
-        ...
-         */
-        return false;
+        File sourceFile = new File(sourceFileName);
+        File destinationFile = new File(destinationFileName);
+        if (destinationFile.exists()) return false;
+
+        if(sourceFile.exists() && sourceFile.isFile()){
+            try(FileInputStream fileInputStream = new FileInputStream(sourceFile);
+                FileOutputStream fileOutputStream = new FileOutputStream(destinationFile, true);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream)){
+
+                byte[] buffer = new byte[256];
+                int count;
+                while ((count = bufferedInputStream.read(buffer)) != -1){
+                    bufferedOutputStream.write(buffer,0,count);
+                }
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return destinationFile.exists();
     }
 
     /**
@@ -73,9 +110,29 @@ public class MyIOExample
      */
     public boolean copyFileWithReaderAndWriter(String sourceFileName, String destinationFileName)
     {
-        /*
-        ...
-         */
-        return false;
+        File sourceFile = new File(sourceFileName);
+        File destinationFile = new File(destinationFileName);
+        if (destinationFile.exists()) return false;
+
+        if(sourceFile.exists() && sourceFile.isFile()){
+            try(FileReader fileReader = new FileReader(sourceFile);
+            FileWriter fileWriter = new FileWriter(destinationFile, true)){
+
+                char[] buffer = new char[256];
+                int count;
+                while ((count = fileReader.read(buffer)) > 0){
+                    if (count < 256){
+                        buffer = Arrays.copyOf(buffer,count);
+                    }
+                    fileWriter.write(buffer);
+                }
+                fileWriter.flush();
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return destinationFile.exists();
     }
 }
